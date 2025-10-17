@@ -1,5 +1,7 @@
 -- SHIFTHUB AUTO LOADER V2 (Autenticação automática por Discord/Roblox ID)
-local API_URL_BASE = "https://patchily-droopiest-herbert.ngrok-free.dev"
+-- Ajuste estes valores para o seu ambiente (ngrok + secret)
+local API_URL_BASE = "https://patchily-droopiest-herbert.ngrok-free.dev" -- ex: https://patchily-droopiest-herbert.ngrok-free.dev
+local API_SECRET = "Xota321" -- coloque aqui seu API_SECRET (mantenha privado)
 
 -- === CONFIGURAÇÕES ===
 local DISCORD_ID = nil -- Será preenchido automaticamente se você usar o sistema de vinculação
@@ -62,7 +64,7 @@ local function getKeyByDiscordId(discordId)
     
     log("Buscando key via Discord ID: " .. discordId, "DEBUG")
     
-    local url = API_URL_BASE .. "/get-key-by-discord?discordId=" .. discordId
+    local url = string.format("%s/get-key-by-discord?discordId=%s&secret=%s", API_URL_BASE, tostring(discordId), tostring(API_SECRET))
     local success, result = pcall(function()
         return game:HttpGet(url, true)
     end)
@@ -86,7 +88,7 @@ local function getKeyByRobloxId()
     
     log("Buscando key via Roblox ID: " .. userId, "DEBUG")
     
-    local url = API_URL_BASE .. "/get-key-by-roblox?robloxId=" .. userId
+    local url = string.format("%s/get-key-by-roblox?robloxId=%s&secret=%s", API_URL_BASE, tostring(userId), tostring(API_SECRET))
     local success, result = pcall(function()
         return game:HttpGet(url, true)
     end)
@@ -191,9 +193,9 @@ log("Key obtida: " .. script_key:sub(1, 4) .. "************")
 local user_hwid = getHwid()
 log("HWID: " .. user_hwid:sub(1, 20) .. "...")
 
--- Valida com o servidor
+-- Valida com o servidor (inclui o secret)
 log("Validando com servidor...")
-local full_url = string.format("%s/verify?key=%s&hwid=%s", API_URL_BASE, script_key, user_hwid)
+local full_url = string.format("%s/verify?key=%s&hwid=%s&secret=%s", API_URL_BASE, script_key, user_hwid, API_SECRET)
 
 local success, result = pcall(function()
     return game:HttpGet(full_url, true)
